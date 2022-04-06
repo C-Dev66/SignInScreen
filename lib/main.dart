@@ -4,12 +4,13 @@ void main() => runApp(const SignUpApp());
 
 class SignUpApp extends StatelessWidget {
   const SignUpApp();
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
         '/': (context) => const SignUpScreen(),
+        '/welcome':(context) => WelcomeScreen(),
       },
     );
   }
@@ -17,7 +18,7 @@ class SignUpApp extends StatelessWidget {
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +35,22 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Welcome', style: Theme.of(context).textTheme.headline2),
+      ),
+    );
+  }
+}
+
 class SignUpForm extends StatefulWidget {
   const SignUpForm();
-  
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -48,17 +62,40 @@ class _SignUpFormState extends State<SignUpForm> {
 
   double _formProgress = 0;
 
+void _showWelcomeScreen() {
+  Navigator.of(context).pushNamed('/welcome');
+} 
+
+
+void _updateFormProgress(){
+  var progress = 0.0;
+  final controllers = [
+    _firstNameTextController,
+    _lastNameTextController,
+    _usernameTextController
+  ];
+
+  for (final controller in controllers){
+    if (controller.value.text.isNotEmpty) {
+      progress += 1 / controllers.length;
+    }
+  }
+
+  setState(() {
+    _formProgress = progress;
+  });
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
+      onChanged: _updateFormProgress,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           LinearProgressIndicator(value: _formProgress),
-          Text('Sign up', style: Theme
-              .of(context)
-              .textTheme
-              .headline4),
+          Text('Sign up', style: Theme.of(context).textTheme.headline4),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
@@ -82,14 +119,20 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           TextButton(
             style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled) ? null : Colors.white;
+              foregroundColor: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? null
+                    : Colors.white;
               }),
-              backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled) ? null : Colors.blue;
+              backgroundColor: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? null
+                    : Colors.blue;
               }),
             ),
-            onPressed: null,
+            onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
             child: const Text('Sign up'),
           ),
         ],
