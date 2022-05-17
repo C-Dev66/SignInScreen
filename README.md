@@ -1,4 +1,4 @@
-<img src="https://github.com/C-Dev66/RSVPGuestbookChatApp/blob/main/screenshots/SideBySide.png" alt="HomePage"/>
+<img src="https://github.com/C-Dev66/SignInScreen/blob/main/screenshots/Screen%20Shot%202022-05-16%20at%205.23.56%20PM.png" alt="HomePage"/>
 
 # RSVPGuestBookChatApp
 > This multi-platform application(Andoird, iOS, Web) serves the purpose of storing users who will be attending the up coming convention. Once authenticated guests have the option to communicate in a chatroom with all other participants.
@@ -140,5 +140,5 @@ For more information refer to the official documentation.
 ---
 
 ## Demo
-![HomePage Gif](https://github.com/C-Dev66/RSVPGuestbookChatApp/blob/main/screenshots/DemoGif.gif)
+![HomePage Gif](https://github.com/C-Dev66/SignInScreen/blob/main/screenshots/SignInScreenGif.gif)
 
