@@ -1,7 +1,7 @@
 <img src="https://github.com/C-Dev66/SignInScreen/blob/main/screenshots/Screen%20Shot%202022-05-16%20at%205.23.56%20PM.png" alt="HomePage"/>
 
 # SignInScreen
-> This multi-platform application(Andoird, iOS, Web) creates a LoginScreen that contains three text fields: first name, last name, and username. As the user fills out the fields, a progress bar animates along the top of the sign in area. When all three fields are filled in, the progress bar displays in green along the full width of the sign in area, and the Sign up button becomes enabled. Clicking the Sign up button causes a welcome screen to animate in from the bottom of the screen
+> This multi-platform application(Andoird, iOS, Web) creates a LoginScreen that contains three text fields: first name, last name, and username. As the user fills out the fields, a progress bar animates along the top of the sign in area. When all three fields are filled in, the progress bar displays in green along the full width of the sign in area, and the Sign up button becomes enabled. Clicking the Sign up button causes a welcome screen to animate.
 
 ---
 
