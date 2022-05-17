@@ -1,7 +1,7 @@
 <img src="https://github.com/C-Dev66/SignInScreen/blob/main/screenshots/Screen%20Shot%202022-05-16%20at%205.23.56%20PM.png" alt="HomePage"/>
 
-# RSVPGuestBookChatApp
-> This multi-platform application(Andoird, iOS, Web) serves the purpose of storing users who will be attending the up coming convention. Once authenticated guests have the option to communicate in a chatroom with all other participants.
+# SignInScreen
+> This multi-platform application(Andoird, iOS, Web) creates a LoginScreen that contains three text fields: first name, last name, and username. As the user fills out the fields, a progress bar animates along the top of the sign in area. When all three fields are filled in, the progress bar displays in green along the full width of the sign in area, and the Sign up button becomes enabled. Clicking the Sign up button causes a welcome screen to animate in from the bottom of the screen
 
 ---
 
@@ -19,19 +19,13 @@
 
 ## Description
 
-Application is built with Google's Flutter front-end as well their native back-end service Firebase.
+We will create a Flutter Web App with bject-oriented programming, and concepts such as variables, loops, and conditionals.
 
-- **Firebase Authentication** to allow your users to sign in to the app.
-- **Cloud Firestore** to save structured data on the cloud and get istant notification when data changes.
-- **Firebase Security** Rules to secure the database.
+- Basic structure of a Flutter app
+- How to implement a Tween animation
+- How to implement a stateful widget
+- How to use the debugger to set breakpoints
 
-Cloud Firestore is a NoSQL database, and data stored in the database is split into collections, documents, fields, and subcollections.
-
-We will store each message of the chat as a document in a top-level collection called guestbook.
-
-
-
-<img src="https://github.com/C-Dev66/RSVPGuestbookChatApp/blob/main/screenshots/DataModel.png" alt="HomePage" width="400"/>
 
 ---
 
@@ -39,20 +33,13 @@ We will store each message of the chat as a document in a top-level collection c
 
 > Setting up the application
 ```
-// Configure dependencies
+// Check Flutter Instalation
 
-flutter pub add firebase_core
-flutter pub add firebase_auth
-flutter pub add cloud_firestore
-flutter pub add provider
+flutter doctor
 
-// Installing flutterfire
+// Search for Available Devices
 
-dart pub global activiate  flutter_cli
-
-// Configuring your app
-
-flutterfire configure
+flutter devices
 ```
 
 > Adding user sign-in RSVP
@@ -72,67 +59,106 @@ Consumer<ApplicationState>(
 
 ```
 
-> Writing Messages to Cloud Firestore
+## Observations
+- The entire code for this example lives in the lib/main.dart file
+- If you know Java, the Dart language should feel very familiar
+	- All of the app’s UI is created in Dart code
+- The app’s UI adheres Material Design, a visual design language that runs on any device or platform.
+- In Flutter, almost everything is a Widget. Even the app itself is a widget. The app’s UI can be described as a widget tree.
+
+
+> Create WelcomeScreen Widget & SignUpForm
 ```dart
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
+...
 
-Future<DocumentReference> addMessageToGuestBook(String message) {
-	if (_loginState != ApplicationLoginState.loggedIn) {
-      throw Exception('Must be logged in');
-    }
+class SignUpForm extends StatefulWidget {
+  const SignUpForm();
 
-    return FirebaseFirestore.instance
-        .collection('guestbook')
-        .add(<String, dynamic>{
-      'text': message,
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'name': FirebaseAuth.instance.currentUser!.displayName,
-      'userId': FirebaseAuth.instance.currentUser!.uid,
-    });
+  @override
+  _SignUpFormState createState() => _SignUpFormState();
 }
 
-Consumer<ApplicationState>(
-     builder: (context, appState, _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+class _SignUpFormState extends State<SignUpForm> {
+  final _firstNameTextController = TextEditingController();
+  final _lastNameTextController = TextEditingController();
+  final _usernameTextController = TextEditingController();
+
+  double _formProgress = 0;
+
+  void _showWelcomeScreen() {
+    Navigator.of(context).pushNamed('/welcome')
+```
+
+> Enable sign in progress tracking
+```dart
+      onChanged: _updateFormProgress,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-            if (appState.loginState == ApplicationLoginState.loggedIn) ...[
-                const Header('Discussion'),
-                GuestBook(
-                    addMessage: (message) =>
-                        appState.addMessageToGuestBook(message),
-                  ),
-            ],
-        ],
-    ),
-),
+          AnimatedProgressIndicator(value: _formProgress),
+          Text('Sign up', style: Theme.of(context).textTheme.headline4),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _firstNameTextController,
+              decoration: const InputDecoration(hintText: 'First name'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _lastNameTextController,
+              decoration: const InputDecoration(hintText: 'Last name'),
+            ),
+          ),
+...
 ```
 
-> Adding security & validation rules cloud.firestore
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /guestbook/{entry} {
-      allow read: if request.auth.uid != null;
-      allow write:
-      if request.auth.uid == request.resource.data.userId
-          && "name" in request.resource.data
-          && "text" in request.resource.data
-          && "timestamp" in request.resource.data;
-    }
-  }
-}
+> Add animations for sign in progress
+```dart
+class _AnimatedProgressIndicatorState extends State<AnimatedProgressIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+  late Animation<double> _curveAnimation;
+
+  @override
+  void initState(){
+    super.initState();
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 1200), vsync: this);
+
+    final colorTween = TweenSequence([
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.red, end: Colors.orange),
+        weight: 1,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.orange, end: Colors.yellow),
+        weight: 1,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.yellow, end: Colors.green),
+        weight: 1,
+...
 ```
 
 ---
 
 ## Summary
 
-Awesome introduction to Firebase, Cloud Firestore, & Security Rules. Really enjoyed this project and will seek to build more applications with their native database service. All around great experience, the future is bright for Flutter. Glad to be able to partaken in this revolutinary stack. 🤩🫶
+Creating this application adds another tool into my arsenal. Having a user sign in screen is crucial to most development projects.Structing this in flutter will allow me to use this as a template for future labs. Really enjoyed the introduction to Tween animatio and stateful widgets. Flutter can simply be explained as a widget tree where each instance branches off to a different flow but can be called back once you're in a children widget. Like a river flowing up and downstream at the same time.
+
+## Observations
+- AnimationController can be used to run any animation
+- AnimatedBuilder rebuilds the widget tree when the value of an Animation changes
+- Using a Tween, you can interpolate between almost any value, in this case Color
 
 For more information refer to the official documentation.
 
+- [Flutter Documentation](https://docs.flutter.dev/)
 - [Firebase Documentation](https://firebase.google.com/docs)
 - [Flutterfire](https://firebase.google.com/docs/flutter/setup?platform=ios)
 - [Google's awesome Flutter Youtube channel, Lots of great content here](https://www.youtube.com/channel/UCwXdFgeE9KYzlDdR7TG9cMw)
